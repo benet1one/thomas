@@ -1,0 +1,54 @@
+
+my_model <- jags_model({
+    a ~ dexp(0.01)
+    b ~ dexp(0.01)
+
+    for (i in 1:n) {
+        lambda[i] ~ dgamma(a, b)
+        y[i] ~ dpois(lambda[i])
+    }
+
+    l ~ dgamma(a, b)
+})
+
+my_data <- list(y = rpois(50, 32), n = 50)
+
+jags_fit <- run_jags(
+    model = my_model,
+    data = my_data,
+    parameters = c("a", "b", "l"),
+    iter = 100
+)
+
+run_jags(
+    file = "tests/testthat/model.jags",
+    data = my_data,
+    parameters = c("a", "b", "l"),
+    iter = 100
+)
+
+test_that("file and model", {
+    expect_error(run_jags(
+        model = my_model,
+        file = "tests/testthat/model.jags",
+        data = my_data,
+        parameters = c("a", "b", "l"),
+        iter = 100
+    ))
+    expect_error(run_jags(
+        data = my_data,
+        parameters = c("a", "b", "l"),
+        iter = 100
+    ))
+    expect_warning(jags_model(
+        model = {whatever},
+        file = "tests/testthat/model.jags"
+    ))
+})
+
+
+
+
+
+
+

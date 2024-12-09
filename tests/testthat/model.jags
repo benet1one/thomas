@@ -1,0 +1,12 @@
+
+model {
+    a ~ dexp(0.01)
+    b ~ dexp(0.01)
+
+    for (i in 1:n) {
+        lambda[i] ~ dgamma(a, b)
+        y[i] ~ dpois(lambda[i])
+    }
+
+    l ~ dgamma(a, b)
+}
