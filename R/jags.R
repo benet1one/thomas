@@ -21,9 +21,10 @@ format_jags_block <- function(expr, block_name) {
 #' @param file String indicating where the model is written.
 #'
 #' @details
-#' In order to truncate a distribution, you can use the magrittr pipe (%>%)
-#' and NOT the R pipe (|>) between the distribution and the truncation, such as:
-#' \code{dnorm(0, 1) %>% T(0, )}
+#' In order to truncate a distribution, you can use
+#' the magrittr pipe \code{\%>\%}
+#' and NOT the R pipe \code{|>} between the distribution and the truncation,
+#' such as \code{dnorm(0, 1) \%>\% T(0, )}
 #'
 #' @export
 #' @examples
@@ -49,16 +50,17 @@ jags_model <- function(model, data, file) {
     model_text <- format_jags_block(rlang::enexpr(model), "model")
     data_text <- if (!missing(data))
         format_jags_block(rlang::enexpr(data), "data")
-    text <- paste(data_text, model_text, sep = "\n")
+    text <- paste(data_text, model_text, sep = "\n") |> trimws()
     structure(text, class = "jags_model")
 }
 
 #' @export
 print.jags_model <- function(x, ...) {
     cat("<JAGS Model>\n")
-    cat(x)
+    line_split <- strsplit(x, r"(\n)") |> unlist()
+    lined <- paste0(1:length(line_split), ": ", line_split, collapse = "\n")
+    cat(lined)
 }
-
 
 parse_jags_inits <- function(inits, chains) {
     if (is.null(inits))
@@ -98,24 +100,24 @@ parse_jags_model <- function(model) {
 #' @param thin Positive integer specifying the period for saving samples.
 #' @param chains Positive integer specifying the number of Markov chains.
 #' The default is 4.
+#' @param seed Seed to use for the RNG. In JAGS, specifying a seed
+#' simply runs \code{set.seed(seed)}.
 #' @param ... Arguments passed on to [R2jags::jags()].
 #'
 #' @return An rjags fit.
 #' @export
-#'
-#' @examples
 run_jags <- function(model, file, data, inits = NULL, parameters,
                      iter = 2000, burnin = floor(iter/2), thin = 1,
                      chains = 4, warmup = burnin, seed, ...) {
 
+    if (!missing(seed))
+        set.seed(seed)
     if (missing(model) + missing(file) != 1L)
         stop("Specify either model (see jags_model()) or file.")
     if (!missing(model)) {
         model <- parse_jags_model(model)
         file <- textConnection(model)
     }
-    if (!missing(seed))
-        set.seed(seed)
 
     fit <- R2jags::jags(
         model.file = file,
@@ -132,11 +134,26 @@ run_jags <- function(model, file, data, inits = NULL, parameters,
 }
 
 #' @export
-get_samples.rjags <- function(x, n = NULL) {
-    samples_to_df(x$BUGSoutput$sims.array, n)
+get_draws.rjags <- function(fit, as = c("df", "list", "array")) {
+    as <- as[1L]
+    switch(as,
+       df = fit$BUGSoutput$sims.array |> draws_to_df(),
+       array = fit$BUGSoutput$sims.array,
+       list = fit$BUGSoutput$sims.list
+    )
 }
 
+#' @export
+get_parameter_dim.rjags <- function(fit) {
+    d <- get_means(fit) |> lapply(dim)
+    d[names(d) != "deviance"]
+}
 
+#' @export
+get_means.rjags <- function(fit) {
+    fit$BUGSoutput$mean
+}
 
-
-
+get_sd.rjags <- function(fit) {
+    fit$BUGSoutput$sd
+}

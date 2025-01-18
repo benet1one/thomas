@@ -8,6 +8,12 @@ my_model <- jags_model({
         y[i] ~ dpois(lambda[i])
     }
 
+    for (i in 1:3) {
+        for (j in 1:4) {
+            whatever[i, j] ~ dexp(1)
+        }
+    }
+
     l ~ dgamma(a, b)
 })
 
@@ -16,7 +22,7 @@ my_data <- list(y = rpois(50, 32), n = 50)
 jags_fit <- run_jags(
     model = my_model,
     data = my_data,
-    parameters = c("a", "b", "l"),
+    parameters = c("a", "b", "l", "lambda", "whatever"),
     iter = 100
 )
 

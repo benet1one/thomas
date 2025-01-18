@@ -10,8 +10,15 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests: 
+    cmdstanr,
     parallel,
-    testthat (>= 3.0.0),
-    tibble
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2
+Imports: 
+    R2jags,
+    reshape2,
+    rlang,
+    rstan,
+    stringr,
+    tibble

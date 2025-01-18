@@ -4,11 +4,25 @@
 \alias{jags_model}
 \title{Write a JAGS model with R's syntax highlighting.}
 \usage{
-jags_model(model, data)
+jags_model(model, data, file)
+}
+\arguments{
+\item{model}{Expression or string containing the code for the model block.}
+
+\item{data}{Expression or string containing the code for the data block.}
+
+\item{file}{String indicating where the model is written.}
 }
 \description{
 Instead of writing the model on a string, write it inside
 this function and get syntax highlighting and warnings.
+Alternatively, specify the file where the model is written.
+}
+\details{
+In order to truncate a distribution, you can use
+the magrittr pipe \code{\%>\%}
+and NOT the R pipe \code{|>} between the distribution and the truncation,
+such as \code{dnorm(0, 1) \%>\% T(0, )}
 }
 \examples{
 my_model <- jags_model({

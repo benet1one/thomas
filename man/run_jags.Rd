@@ -2,7 +2,7 @@
 % Please edit documentation in R/jags.R
 \name{run_jags}
 \alias{run_jags}
-\title{Run a JAGS model}
+\title{Run MCMC on a JAGS model}
 \usage{
 run_jags(
   model,
@@ -44,6 +44,9 @@ If a data.frame, each row must contain the initial value for each parameter.}
 The default is 4.}
 
 \item{warmup}{Alias for burnin.}
+
+\item{seed}{Seed to use for the RNG. In JAGS, specifying a seed
+simply runs \code{set.seed(seed)}.}
 
 \item{...}{Arguments passed on to [R2jags::jags()].}
 }
