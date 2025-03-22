@@ -2,16 +2,22 @@
 % Please edit documentation in R/methods.R
 \name{get_means}
 \alias{get_means}
-\title{Get posterior means.}
+\alias{get_sd}
+\title{Get posterior means and standard deviations.}
 \usage{
 get_means(fit)
+
+get_sd(fit)
 }
 \arguments{
-\item{fit}{STAN or JAGS fit.}
+\item{fit}{Bayesian Fit.}
 }
 \value{
 Named list, where the names are the parameters.
 }
 \description{
 Get the posterior means from a bayesian fit.
+}
+\seealso{
+[thomas::get_statistic()]
 }

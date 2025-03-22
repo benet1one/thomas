@@ -5,15 +5,16 @@
 \alias{get_samples}
 \title{Get posterior samples}
 \usage{
-get_draws(fit, as = c("tibble", "list", "array"))
+get_draws(fit, as = c("df", "list", "array"))
 
-get_samples(fit, as = c("tibble", "list", "array"))
+get_samples(fit, as = c("df", "list", "array"))
 }
 \arguments{
 \item{fit}{STAN or JAGS fit.}
-}
-\value{
-data.frame with columns for iteration, chain, and each parameter.
+
+\item{as}{String, "df" to return a tibble with iteration and chain,
+"list" to return a list of parameters, and
+"array" to return a 3-D array (iter, chain, parameter).}
 }
 \description{
 Get the posterior samples from a bayesian fit.
