@@ -15,7 +15,7 @@ get_draws <- function(fit, as = c("df", "list", "array"))
 
 #' @rdname get_posterior_draws
 #' @export
-get_samples <- function(fit,as = c("df", "list", "array"))
+get_samples <- function(fit, as = c("df", "list", "array"))
     UseMethod("get_draws")
 
 draws_to_df <- function(samp) {
@@ -61,8 +61,9 @@ get_statistic <- function(fit, fun = mean)
 #' @rdname get_means_sd
 #' @description
 #' Get the posterior means from a bayesian fit.
-#' @param fit Stan or JAGS fit.
+#' @param fit Bayesian Fit.
 #' @returns Named list, where the names are the parameters.
+#' @seealso [get_statistic()]
 #' @export
 get_means <- function(fit)
     UseMethod("get_means")
@@ -72,9 +73,9 @@ get_means <- function(fit)
 get_sd <- function(fit)
     UseMethod("get_sd")
 
-
 #' Get dimensions of parameters.
-#' @param x JAGS or Stan fit.
+#' @param fit Bayesian Fit.
+#' @export
 get_parameter_dim <- function(fit)
     UseMethod("get_parameter_dim")
 
@@ -114,8 +115,6 @@ drop_matrices <- function(df) {
     return(df)
 }
 
-attach_fit <- function(fit)
-    UseMethod("attach_fit")
 #' Plot chains to check convergence.
 traceplot <- function(fit, pars = character()) {
 
