@@ -153,9 +153,12 @@ get_parameter_dim.rjags <- function(fit) {
 
 #' @export
 get_means.rjags <- function(fit) {
-    fit$BUGSoutput$mean
+    out <- fit$BUGSoutput$mean
+    out[names(out) != "deviance"]
 }
 
+#' @export
 get_sd.rjags <- function(fit) {
-    fit$BUGSoutput$sd
+    out <- fit$BUGSoutput$sd
+    out[names(out) != "deviance"]
 }
