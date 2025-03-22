@@ -12,13 +12,13 @@ LazyData: true
 Suggests: 
     cmdstanr,
     parallel,
+    R2jags,
+    rstan,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2
-Imports: 
-    R2jags,
+Imports:
     reshape2,
     rlang,
-    rstan,
     stringr,
     tibble

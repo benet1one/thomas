@@ -1,5 +1,8 @@
 
 stan_model <- function(file, string, ...) {
+
+    rlang::check_installed("rstan")
+
     if (!missing(file) + !missing(string) != 1L)
         stop("Specify either a 'file' or a 'string' containing the stan model.")
     message("Compiling Stan model...")
@@ -47,6 +50,8 @@ run_stan <- function(model, file, data, inits = NULL, parameters = NA,
                          parallel::detectCores()
                      else getOption("mc.cores", default = 1L),
                      ...) {
+
+    rlang::check_installed("rstan")
 
     if (missing(model) + missing(file) != 1L)
         stop("Specify either 'model' (see stan_model()) or 'file'.")

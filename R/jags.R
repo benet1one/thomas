@@ -110,6 +110,8 @@ run_jags <- function(model, file, data, inits = NULL, parameters,
                      iter = 2000, burnin = floor(iter/2), thin = 1,
                      chains = 4, warmup = burnin, seed, ...) {
 
+    rlang::check_installed("R2jags")
+
     if (!missing(seed))
         set.seed(seed)
     if (missing(model) + missing(file) != 1L)
