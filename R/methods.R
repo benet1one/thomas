@@ -41,6 +41,22 @@ draws_to_df <- function(samp) {
     return(tib)
 }
 
+vector_to_col <- function(x) {
+    if (length(dim(x)) <= 1L)
+        matrix(x, ncol = 1L)
+    else
+        x
+}
+
+
+#' Get a statistic for each parameter.
+#' @param fit Bayesian Fit.
+#' @param fun Function to apply to the draws of each parameter.
+#' @returns Named list, where the names are the parameters.
+#' @seealso [get_means()], [get_sd()]
+get_statistic <- function(fit, fun = mean)
+    UseMethod("get_statistic")
+
 #' Get posterior means and standard deviations.
 #' @rdname get_means_sd
 #' @description
@@ -63,15 +79,34 @@ get_parameter_dim <- function(fit)
     UseMethod("get_parameter_dim")
 
 
-#' Plot chains to check convergence.
-traceplot <- function(fit, pars) {
+get_statistic.default <- function(fit, fun = mean) {
     draws <- get_draws(fit, as = "df")
+    pdim <- get_parameter_dim(fit)
 
-    for (p in pars) {
-        draws_p <- draws[p]
-        plt <- ggplot2::ggplot(draws_p, aes(x = iter, color = chain, y = value)) +
-            ggplot2::geom_line()
+    sapply(names(pdim), simplify = FALSE, \(p) {
+        mat <- vector_to_col(draws[[p]])
+        stat <- apply(mat, 2L, fun)
+        array(stat, dim = pdim[[p]])
+    })
+}
+
+get_means.default <- function(fit) {
+    get_statistic(fit, fun = mean)
+}
+
+get_sd.default <- function(fit) {
+    get_statistic(fit, fun = sd)
+}
+
+
+drop_matrices <- function(df) {
+    for (k in seq_along(df)) {
+        if (df[[k]] |> is.matrix()) {
+            df[[k]] <- df[[k]][, 1L]
+            names(df)[k] <- paste0(names(df)[k], "[1]")
+        }
     }
+    return(df)
 }
 
 attach_fit <- function(fit)

@@ -76,13 +76,6 @@ run_stan <- function(model, file, data, inits = NULL, parameters = NA,
     )
 }
 
-vector_to_col <- function(x) {
-    if (length(dim(x)) == 1L)
-        matrix(x, ncol = 1L)
-    else
-        x
-}
-
 #' @export
 get_draws.stanfit <- function(fit, as = c("df", "list", "array")) {
     as <- as[1L]
@@ -94,29 +87,20 @@ get_draws.stanfit <- function(fit, as = c("df", "list", "array")) {
 }
 
 #' @export
-get_means.stanfit <- function(fit) {
-    lapply(rstan::extract(fit), stan_sample_fun, fun = mean)
-}
-
-#' @export
-get_sd.stanfit <- function(fit) {
-    lapply(rstan::extract(fit), stan_sample_fun, fun = sd)
+get_statistic.stanfit <- function(fit, fun) {
+    lapply(rstan::extract(fit), function(x) {
+        if (is.null(dim(x)) || length(dim(x)) == 1L)
+            fun(x)
+        else
+            apply(x, 2:length(dim(x)), fun)
+    })
 }
 
 #' @export
 get_parameter_dim.stanfit <- function(fit) {
     pd <- fit@par_dims
     pd <- pd[names(pd) != "lp__"]
-    lapply(pd, function(d) {
-        ifelse(length(d) > 0, d, 1)
-    })
-}
-
-stan_sample_fun <- function(x, fun) {
-    if (is.null(dim(x)) || length(dim(x)) == 1L)
-        fun(x)
-    else
-        apply(x, 2:length(dim(x)), fun)
+    lapply(pd, function(d) d %||% 1L)
 }
 
 
