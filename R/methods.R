@@ -78,6 +78,11 @@ get_sd <- function(fit)
 get_parameter_dim <- function(fit)
     UseMethod("get_parameter_dim")
 
+#' Get the names of parameters as a character vector.
+#' @export
+get_parameters <- function(fit) {
+    names(get_parameter_dim(fit))
+}
 
 get_statistic.default <- function(fit, fun = mean) {
     draws <- get_draws(fit, as = "df")
