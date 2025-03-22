@@ -111,3 +111,21 @@ drop_matrices <- function(df) {
 
 attach_fit <- function(fit)
     UseMethod("attach_fit")
+#' Plot chains to check convergence.
+traceplot <- function(fit, pars = character()) {
+
+    rlang::check_installed("ggplot2")
+    require(ggplot2)
+
+    if (length(pars) == 0L)
+        pars <- head(get_parameters(fit), 4L)
+
+    draws <- get_draws(fit, as = "df")[c("chain", "iter", pars)] |>
+        drop_matrices() |>
+        melt(id.vars = c("chain", "iter"))
+
+    ggplot(draws, aes(x = iter, y = value, color = factor(chain))) +
+        facet_wrap(~variable, scales = "free") +
+        geom_line(show.legend = FALSE) +
+        theme_minimal()
+}
