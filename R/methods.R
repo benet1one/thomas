@@ -85,6 +85,10 @@ get_parameters <- function(fit) {
     names(get_parameter_dim(fit))
 }
 
+#' Get an arbitrary statistic from each parameter of a fit.
+#' @param fit Bayesian fit.
+#' @param fun Function to apply to each parameter.
+#' @export
 get_statistic.default <- function(fit, fun = mean) {
     draws <- get_draws(fit, as = "df")
     pdim <- get_parameter_dim(fit)
@@ -96,10 +100,12 @@ get_statistic.default <- function(fit, fun = mean) {
     })
 }
 
+#' @export
 get_means.default <- function(fit) {
     get_statistic(fit, fun = mean)
 }
 
+#' @export
 get_sd.default <- function(fit) {
     get_statistic(fit, fun = sd)
 }
@@ -116,6 +122,7 @@ drop_matrices <- function(df) {
 }
 
 #' Plot chains to check convergence.
+#' @export
 traceplot <- function(fit, pars = character()) {
 
     rlang::check_installed("ggplot2")

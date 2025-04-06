@@ -4,7 +4,7 @@
 \alias{traceplot}
 \title{Plot chains to check convergence.}
 \usage{
-traceplot(fit, pars)
+traceplot(fit, pars = character())
 }
 \description{
 Plot chains to check convergence.
