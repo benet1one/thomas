@@ -31,8 +31,7 @@ draws_to_df <- function(samp) {
 
     for (p in unique(par_names)) {
         mat <- df[par_names == p, ] |>
-            reshape2::acast(chain + iter ~ parameter) |>
-            unname()
+            reshape2::acast(chain + iter ~ parameter)
         if (ncol(mat) == 1L)
             mat <- c(mat)
         tib[[p]] <- mat
@@ -111,29 +110,40 @@ get_sd.default <- function(fit) {
 }
 
 
-drop_matrices <- function(df) {
-    for (k in seq_along(df)) {
-        if (df[[k]] |> is.matrix()) {
-            df[[k]] <- df[[k]][, 1L]
-            names(df)[k] <- paste0(names(df)[k], "[1]")
-        }
+drop_matrices <- function(df, max_cols = 4L) {
+    df <- as.list(df)
+
+    for (k in 1:length(df))  if (is.matrix(df[[k]])) {
+        to <- min(max_cols, 1)
+        df[[k]] <- df[[k]][, 1:to] |> as.data.frame()
     }
-    return(df)
+
+    dplyr::bind_cols(df)
 }
 
 #' Plot chains to check convergence.
+#'
+#' @param fit Bayesian fit.
+#' @param ... Parameters to select, passed to [dplyr::select()].
+#' @param .max_values For multivariate parameters, number of different values to plot.
+#'
 #' @export
-traceplot <- function(fit, pars = character()) {
+traceplot <- function(fit, ..., .max_values = 4L) {
 
     rlang::check_installed("ggplot2")
-    require(ggplot2)
+    require(ggplot2, quietly = TRUE)
 
-    if (length(pars) == 0L)
-        pars <- head(get_parameters(fit), 4L)
+    draws <- get_draws(fit, as = "df")
 
-    draws <- get_draws(fit, as = "df")[c("chain", "iter", pars)] |>
-        drop_matrices() |>
-        melt(id.vars = c("chain", "iter"))
+    if (...length() == 0L) {
+        draws <- dplyr::select(draws, 1:6)
+    } else {
+        draws <- dplyr::select(draws, iter, chain, ...)
+    }
+
+    draws <- draws |>
+        drop_matrices(max_cols = .max_values) |>
+        reshape2::melt(id.vars = c("chain", "iter"))
 
     ggplot(draws, aes(x = iter, y = value, color = factor(chain))) +
         facet_wrap(~variable, scales = "free") +

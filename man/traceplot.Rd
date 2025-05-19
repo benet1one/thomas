@@ -4,7 +4,14 @@
 \alias{traceplot}
 \title{Plot chains to check convergence.}
 \usage{
-traceplot(fit, pars = character())
+traceplot(fit, ..., .max_values = 4L)
+}
+\arguments{
+\item{fit}{Bayesian fit.}
+
+\item{...}{Parameters to select, passed to [dplyr::select()].}
+
+\item{.max_values}{For multivariate parameters, number of different values to plot.}
 }
 \description{
 Plot chains to check convergence.
