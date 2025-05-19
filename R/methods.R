@@ -18,7 +18,7 @@ get_draws <- function(fit, as = c("df", "list", "array"))
 get_samples <- function(fit, as = c("df", "list", "array"))
     UseMethod("get_draws")
 
-draws_to_df <- function(samp) {
+draws_to_df <- function(samp, par_dim) {
     names(dimnames(samp)) <- c("iter", "chain", "parameter")
     df <- reshape2::melt(samp)
     par_names <- stringr::str_remove(df$parameter, r"(\[.+\])")
@@ -37,7 +37,44 @@ draws_to_df <- function(samp) {
         tib[[p]] <- mat
     }
 
-    return(tib)
+    structure(
+        tib,
+        class = c("thomas_draw_df", class(tib)),
+        par_dim = par_dim
+    )
+}
+
+#' Extract a draw and reshape it to the dimensions of each parameter
+#'
+#' @param x Data frame containing the draws.
+#' @param ... Indexes. You can select one row and any number columns.
+#'
+#' @returns A named list where each parameter has the right dimension.
+#' @export
+#'
+#' @examples
+#' draws <- get_draws(fit)
+#' draws[[1, ]]
+#' draws[1, ]
+`[[.thomas_draw_df` <- function(x, ...) {
+    y <- x[...]
+
+    if (nrow(y) != 1L) {
+        stop("Use draws[[i, ]] to extract exactly one draw.")
+    }
+
+    y <- as.list(y)
+    pd <- attr(x, "par_dim")
+
+    for (k in seq_along(y)) {
+        p <- names(y)[k]
+        if (p %in% names(pd)) {
+            y[[k]] <- array(y[[k]], dim = pd[[p]])
+        }
+    }
+
+    attr(y, "par_dim") <- NULL
+    return(y)
 }
 
 vector_to_col <- function(x) {

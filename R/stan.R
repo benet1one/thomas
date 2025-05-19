@@ -79,8 +79,9 @@ run_stan <- function(model, file, data, inits = NULL, parameters = NA,
 #' @export
 get_draws.stanfit <- function(fit, as = c("df", "list", "array")) {
     as <- as[1L]
+    pd <- get_parameter_dim(fit)
     switch(as,
-        df = rstan::extract(fit, permuted = FALSE) |> draws_to_df(),
+        df = rstan::extract(fit, permuted = FALSE) |> draws_to_df(pd),
         array = rstan::extract(fit, permuted = FALSE),
         list = rstan::extract(fit) |> lapply(vector_to_col)
     )

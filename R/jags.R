@@ -138,8 +138,10 @@ run_jags <- function(model, file, data, inits = NULL, parameters,
 #' @export
 get_draws.rjags <- function(fit, as = c("df", "list", "array")) {
     as <- as[1L]
+    pd <- get_parameter_dim(fit)
+
     switch(as,
-       df = fit$BUGSoutput$sims.array |> draws_to_df(),
+       df = fit$BUGSoutput$sims.array |> draws_to_df(pd),
        array = fit$BUGSoutput$sims.array,
        list = fit$BUGSoutput$sims.list
     )

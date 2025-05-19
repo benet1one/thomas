@@ -56,9 +56,11 @@ run_cmdstan <- function(model, file, data, inits = NULL,
 get_draws.CmdStanMCMC <- function(fit, as = c("df", "list", "array")) {
     as <- as[1L]
     draws <- fit$draws(format = "array")
+    pd <- get_parameter_dim(fit)
+
     switch(as,
-        df = draws_to_df(draws),
-        list = draws_to_df(draws) |> as.list(),
+        df = draws_to_df(draws, pd),
+        list = draws_to_df(draws, pd) |> as.list(),
         array = draws
     )
 }
