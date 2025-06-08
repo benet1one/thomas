@@ -9,7 +9,7 @@ traceplot(fit, ..., .max_values = 4L)
 \arguments{
 \item{fit}{Bayesian fit.}
 
-\item{...}{Parameters to select, passed to [dplyr::select()].}
+\item{...}{Parameters to select, passed to \code{\link[dplyr:select]{dplyr::select()}}.}
 
 \item{.max_values}{For multivariate parameters, number of different values to plot.}
 }

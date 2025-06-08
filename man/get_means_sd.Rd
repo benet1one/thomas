@@ -19,5 +19,5 @@ Named list, where the names are the parameters.
 Get the posterior means from a bayesian fit.
 }
 \seealso{
-[get_statistic()]
+\code{\link[=get_statistic]{get_statistic()}}
 }

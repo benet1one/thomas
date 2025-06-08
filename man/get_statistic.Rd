@@ -18,5 +18,5 @@ Named list, where the names are the parameters.
 Get a statistic for each parameter.
 }
 \seealso{
-[get_means()], [get_sd()]
+\code{\link[=get_means]{get_means()}}, \code{\link[=get_sd]{get_sd()}}
 }

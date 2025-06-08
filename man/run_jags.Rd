@@ -20,7 +20,7 @@ run_jags(
 )
 }
 \arguments{
-\item{model}{Jags model as a string or created with [jags_model()].}
+\item{model}{Jags model as a string or created with \code{\link[=jags_model]{jags_model()}}.}
 
 \item{file}{Alternatively, a file where the JAGS model is written.}
 
@@ -48,7 +48,7 @@ The default is 4.}
 \item{seed}{Seed to use for the RNG. In JAGS, specifying a seed
 simply runs \code{set.seed(seed)}.}
 
-\item{...}{Arguments passed on to [R2jags::jags()].}
+\item{...}{Arguments passed on to \code{\link[R2jags:jags]{R2jags::jags()}}.}
 }
 \value{
 An rjags fit.
