@@ -173,7 +173,7 @@ traceplot <- function(fit, ..., .max_values = 4L) {
     draws <- get_draws(fit, as = "df")
 
     if (...length() == 0L) {
-        draws <- dplyr::select(draws, 1:6)
+        draws <- draws[1:min(6L, ncol(draws))]
     } else {
         draws <- dplyr::select(draws, iter, chain, ...)
     }
