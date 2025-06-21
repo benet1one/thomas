@@ -5,7 +5,12 @@
 \alias{jags_fit}
 \title{Example JAGS fit}
 \format{
-An object of class \code{rjags} of length 6.
+Fit with 3 parameters:
+\itemize{
+\item alpha (scalar)
+\item beta (vector of length 3)
+\item gamma (matrix of size 3x2)
+}
 }
 \usage{
 jags_fit
