@@ -24,3 +24,5 @@ Imports:
     rlang,
     stringr,
     tibble
+Depends: 
+    R (>= 3.5)
