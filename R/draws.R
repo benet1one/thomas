@@ -168,7 +168,9 @@ attach_draw <- function(fit, index, chain, iter, envir = parent.frame()) {
     list2env(draw, envir = envir)
     invisible(draw)
 }
-attach_sample <- function(...) {
-    attach_draw(...)
+#' @rdname attach_draw
+#' @export
+attach_sample <- function(fit, index, chain, iter, envir = parent.frame()) {
+    attach_draw(fit, index, chain, iter, envir)
 }
 
