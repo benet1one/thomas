@@ -25,6 +25,21 @@ get_draws_anyway <- function(fit_or_draws) {
         get_draws(fit_or_draws)
 }
 
+#' Permute Draws
+#'
+#' @description
+#' Draws taken from the MCMC algorithm are correlated with the previous and next draws.
+#' Permute them to remove this effect.
+#'
+#' @param within_chain Logical, whether to permute all draws (default) or permute
+#' iterations within each chain.
+permute_draws <- function(draws, within_chain = FALSE) {
+    if (within_chain)
+        draws <- draws |> dplyr::group_by(chain)
+    dplyr::slice_sample(draws, n = nrow(draws)) |>
+        dplyr::ungroup()
+}
+
 #' Get a statistic for each parameter.
 #' @param fit Bayesian Fit.
 #' @param fun Function to apply to the draws of each parameter.
