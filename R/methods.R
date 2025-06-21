@@ -43,7 +43,7 @@ get_sd <- function(fit)
     UseMethod("get_sd")
 
 #' Get dimensions of parameters.
-#' @param fit Bayesian Fit.
+#' @param x A Bayesian Fit or a Draw Data Frame as generated from [get_draws()].
 #' @export
 get_parameter_dim <- function(fit)
     UseMethod("get_parameter_dim")

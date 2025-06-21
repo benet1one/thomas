@@ -25,6 +25,11 @@ draws_to_df <- function(samp, par_dim) {
     )
 }
 
+#' @export
+get_parameter_dim.thomas_draw_df <- function(fit) {
+    attr(fit, "par_dim")
+}
+
 #' Extract a draw and reshape it to the dimensions of each parameter
 #'
 #' @param x Data frame containing the draws.
