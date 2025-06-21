@@ -38,10 +38,16 @@ draws_to_df <- function(samp, par_dim) {
 #' draws[[1, ]]
 #' draws[1, ]
 `[[.thomas_draw_df` <- function(x, ...) {
+    if (...length() != 1L && ...length() != 2L) {
+
+    }
     if (...length() == 1L) {
-        i <- c(...)
-        y <- x[i, ]
+        return(unclass(x)[[...]])
     } else if (...length() == 2L) {
+        dots <- rlang::dots_list(..., .ignore_empty = "none", .preserve_empty = TRUE)
+        if (rlang::is_missing(dots[[1L]])) {
+            return(unclass(x)[[dots[[2L]]]])
+        }
         y <- x[...]
     } else {
         rlang::abort("Use draws[[i, ]] to extract exactly one draw.")
@@ -57,6 +63,8 @@ draws_to_df <- function(samp, par_dim) {
         }
     }
 
+    if (length(y) == 1L)
+        y <- y[[1L]]
     attr(y, "par_dim") <- NULL
     return(y)
 }
@@ -147,10 +155,10 @@ attach_draw <- function(fit, draws = get_draws(fit), index, chain, iter, envir =
         }
 
     } else {
-        rlang::abort("You must either specify the index, or the chain and iter")
+        rlang::abort("You must either specify 'index', or 'chain' and 'iter'")
     }
 
-    draw <- draws[[index]]
+    draw <- draws[[index, ]]
     list2env(draw, envir = envir)
     invisible(draw)
 }
