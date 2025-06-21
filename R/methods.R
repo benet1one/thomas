@@ -18,6 +18,13 @@ get_draws <- function(fit, as = c("df", "list", "array"))
 get_samples <- function(fit, as = c("df", "list", "array"))
     UseMethod("get_draws")
 
+get_draws_anyway <- function(fit_or_draws) {
+    if (inherits(fit_or_draws, "thomas_draw_df"))
+        fit_or_draws
+    else
+        get_draws(fit_or_draws)
+}
+
 #' Get a statistic for each parameter.
 #' @param fit Bayesian Fit.
 #' @param fun Function to apply to the draws of each parameter.
