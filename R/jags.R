@@ -116,6 +116,8 @@ run_jags <- function(model, file, data, inits = NULL, parameters,
         set.seed(seed)
     if (missing(model) + missing(file) != 1L)
         stop("Specify either model (see jags_model()) or file.")
+    if (missing(parameters))
+        stop('argument "parameters" is missing, with no default')
     if (!missing(model)) {
         model <- parse_jags_model(model)
         file <- textConnection(model)
