@@ -73,7 +73,7 @@ drop_matrices <- function(df, max_cols = 4L) {
     df <- as.list(df)
 
     for (k in 1:length(df))  if (is.matrix(df[[k]])) {
-        to <- min(max_cols, 1)
+        to <- max_cols |> max(1) |> min(ncol(df[[k]]))
         df[[k]] <- df[[k]][, 1:to] |> as.data.frame()
     }
 
