@@ -89,7 +89,7 @@ get_draws.stanfit <- function(fit, as = c("df", "list", "array")) {
 
 #' @export
 get_statistic.stanfit <- function(fit, fun) {
-    lapply(rstan::extract(fit), function(x) {
+    lapply(rstan::extract(fit, permuted = FALSE), function(x) {
         if (is.null(dim(x)) || length(dim(x)) == 1L)
             fun(x)
         else
