@@ -18,7 +18,8 @@ A named list where each parameter has the right dimension.
 Extract a draw and reshape it to the dimensions of each parameter
 }
 \examples{
-draws <- get_draws(fit)
-draws[[1, ]]
+draws <- get_draws(jags_fit)
 draws[1, ]
+draws[[1, ]]
+draws[[1, "gamma"]]
 }
