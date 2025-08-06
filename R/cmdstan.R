@@ -68,7 +68,7 @@ run_cmdstan <- function(model, file, data, inits = NULL,
         model <- cmdstan_model(file)
     model$sample(
         data = data,
-        init = inits,
+        init = parse_stan_inits(inits, chains),
 
         iter_warmup = warmup,
         iter_sampling = iter - warmup,
