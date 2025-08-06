@@ -2,7 +2,7 @@
 % Please edit documentation in R/cmdstan.R
 \name{cmdstan_model}
 \alias{cmdstan_model}
-\title{Title}
+\title{Compile a Model with CmdStan}
 \usage{
 cmdstan_model(file = NULL, quiet = FALSE, ...)
 }
@@ -12,12 +12,11 @@ a .exe file with the compiled model or a .stan file containing the model code.}
 
 \item{quiet}{Logical, wether to suppress messages.}
 
-\item{...}{Other arguments passed on to
-\code{\link{cmdstanr::cmdstan_model()}}.}
+\item{...}{Other arguments passed on to \code{\link[cmdstanr:cmdstan_model]{cmdstanr::cmdstan_model()}}.}
 }
 \value{
 A CmdStanModel object.
 }
 \description{
-Title
+Compile a Model with CmdStan
 }

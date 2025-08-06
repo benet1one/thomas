@@ -81,29 +81,34 @@ parse_jags_model <- function(model) {
     stop("'model' must be a string or a jags_model().")
 }
 
-#' Run MCMC on a JAGS model
+#' Fit a JAGS model
 #' @description
 #' Generate posterior samples from a JAGS model using Markov Chain Monte-Carlo.
 #'
 #' @param model Jags model as a string or created with [jags_model()].
-#' @param file Alternatively, a file where the JAGS model is written.
+#' @param file Alternatively, a file containing the JAGS code.
 #' @param data List containing the data used to train the model.
-#' @param inits List or data.frame of initial values for parameters.
-#' Must be either length 1 or the number of chains.
-#' If a list, each value must be a named list containing the initial value
-#' for each parameter.
-#' If a data.frame, each row must contain the initial value for each parameter.
+#' @param inits Initial values for parameters. Accepts either:
+#' - Named list, with the initial values for the parameters. All chains will start
+#' with these values. For example:
+#' `inits = list(a = 2, b = 1:5)`.
+#' - List of lists, where each element is a named list of values corresponding to a chain.
+#' For example, with 2 chains:
+#' `inits = list(list(a = 2, b = 1:5), list(a = 3, b = 2:6))`
+#' - Data.frame, where each row corresponds to a chain and each column corresponds to a parameter.
+#' For example: with 2 chains:
+#' `inits = data.frame(a = 2:3, b = list(1:5, 2:6))`
 #' @param parameters Character vector of parameters to monitor.
 #' @param iter Number of iterations, including burnin, per chain.
 #' @param burnin Number of samples to burn per chain.
-#' @param warmup Alias for burnin.
+#' @param warmup Alias for `burnin`.
 #' @param thin Positive integer specifying the period for saving samples.
 #' @param chains Positive integer specifying the number of Markov chains.
 #' The default is 4.
 #' @param seed Seed to use for the RNG. In JAGS, specifying a seed
 #' simply runs \code{set.seed(seed)}.
 #' @param ... Arguments passed on to [R2jags::jags()].
-#'
+#' @seealso [R2jags::jags()]
 #' @return An rjags fit.
 #' @export
 run_jags <- function(model, file, data, inits = NULL, parameters,
