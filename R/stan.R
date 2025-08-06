@@ -1,4 +1,5 @@
 
+#' @export
 stan_model <- function(file, string, ...) {
 
     rlang::check_installed("rstan")
@@ -42,6 +43,7 @@ parse_stan_model <- function(model) {
     stop("'model' must be a string or a stan_model().")
 }
 
+#' @export
 run_stan <- function(model, file, data, inits = NULL, parameters = NA,
                      iter = 2000, burnin = floor(iter/2), thin = 1,
                      chains = 4, warmup = burnin,

@@ -53,7 +53,7 @@ print.CmdStanModel <- function(x, ...) {
 #' @param seed Seed to use for the RNG.
 #' @param ... Arguments passed on to [cmdstanr::sample()].
 #' @seealso [cmdstanr::sample()]
-#' @return
+#' @return A CmdStanMCMC object, inheriting CmdStanFit and R6.
 #' @export
 run_cmdstan <- function(model, file, data, inits = NULL,
                         iter = 2000, burnin = floor(iter/2), thin = 1,

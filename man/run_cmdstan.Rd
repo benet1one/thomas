@@ -56,6 +56,12 @@ The default is 4.}
 
 \item{...}{Arguments passed on to \code{\link[cmdstanr:model-method-sample]{cmdstanr::sample()}}.}
 }
+\value{
+A CmdStanMCMC object, inheriting CmdStanFit and R6.
+}
 \description{
 Generate posterior samples from a CmdStanModel using Markov Chain Monte-Carlo.
+}
+\seealso{
+\code{\link[cmdstanr:model-method-sample]{cmdstanr::sample()}}
 }

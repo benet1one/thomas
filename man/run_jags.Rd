@@ -63,3 +63,6 @@ An rjags fit.
 \description{
 Generate posterior samples from a JAGS model using Markov Chain Monte-Carlo.
 }
+\seealso{
+\code{\link[R2jags:jags]{R2jags::jags()}}
+}
