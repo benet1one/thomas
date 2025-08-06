@@ -81,6 +81,21 @@ run_cmdstan <- function(model, file, data, inits = NULL,
 }
 
 #' @export
+optimize_cmdstan <- function(model, file, data, inits, ...) {
+    rlang::check_installed("cmdstanr")
+
+    if (missing(model) + missing(file) != 1L)
+        stop("Specify either 'model' (see cmdstan_model()) or 'file'.")
+    if (missing(model))
+        model <- cmdstan_model(file)
+    model$optimize(
+        data = data,
+        init = parse_stan_inits(inits, chains = 1L),
+        ...
+    )
+}
+
+#' @export
 get_draws.CmdStanMCMC <- function(fit, as = c("df", "list", "array")) {
     as <- as[1L]
     draws <- fit$draws(format = "array")
