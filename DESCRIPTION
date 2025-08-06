@@ -25,4 +25,4 @@ Imports:
     stringr,
     tibble
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1.0)
