@@ -25,6 +25,21 @@ print.CmdStanModel <- function(x, ...) {
     x$print()
 }
 
+parse_cmdstan_inits <- function(inits, chains) {
+    if (is.null(inits))
+        return(NULL)
+    if (rlang::is_function(inits))
+        return(inits)
+    if (is.data.frame(inits))
+        inits <- split.data.frame(inits, factor(1:nrow(inits)))
+
+    if (length(inits) == 1L)
+        inits <- rep(inits, chains)
+    if (length(inits) != chains)
+        stop("inits must be either length 1, or the number of chains (", chains,").")
+    inits
+}
+
 #' Fit a CmdStan model
 #' @description
 #' Generate posterior samples from a CmdStanModel using Markov Chain Monte-Carlo.
@@ -68,7 +83,7 @@ run_cmdstan <- function(model, file, data, inits = NULL,
         model <- cmdstan_model(file)
     model$sample(
         data = data,
-        init = parse_stan_inits(inits, chains),
+        init = parse_cmdstan_inits(inits, chains),
 
         iter_warmup = warmup,
         iter_sampling = iter - warmup,
@@ -81,7 +96,7 @@ run_cmdstan <- function(model, file, data, inits = NULL,
 }
 
 #' @export
-optimize_cmdstan <- function(model, file, data, inits, ...) {
+optimize_cmdstan <- function(model, file, data, inits = NULL, ...) {
     rlang::check_installed("cmdstanr")
 
     if (missing(model) + missing(file) != 1L)
@@ -90,7 +105,7 @@ optimize_cmdstan <- function(model, file, data, inits, ...) {
         model <- cmdstan_model(file)
     model$optimize(
         data = data,
-        init = parse_stan_inits(inits, chains = 1L),
+        init = parse_cmdstan_inits(inits, chains = 1L),
         ...
     )
 }
@@ -109,7 +124,38 @@ get_draws.CmdStanMCMC <- function(fit, as = c("df", "list", "array")) {
 }
 
 #' @export
-get_parameter_dim.CmdStanMCMC <- function(fit) {
-    d <- fit$metadata()$stan_variable_sizes
-    d[names(d) != "lp__"]
+get_parameter_dim.CmdStanFit <- function(fit) {
+    fit$metadata()$stan_variable_sizes
+}
+
+#' @export
+get_means.CmdStanMCMC <- function(fit) {
+    d <- get_parameter_dim(fit)
+    mapply(name = names(d), d = d, SIMPLIFY = FALSE, function(name, d) {
+        fit$summary(name)$mean |> array(dim = d) |> suppressWarnings()
+    })
+}
+
+#' @export
+get_sd.CmdStanMCMC <- function(fit) {
+    d <- get_parameter_dim(fit)
+    mapply(name = names(d), d = d, SIMPLIFY = FALSE, function(name, d) {
+        fit$summary(name)$sd |> array(dim = d) |> suppressWarnings()
+    })
+}
+
+#' @export
+get_mle.CmdStanMLE <- function(fit) {
+    d <- get_parameter_dim(fit)
+    out <- mapply(name = names(d), d = d, SIMPLIFY = FALSE, function(name, d) {
+        fit$mle(name) |> array(dim = d)
+    })
+
+    out$lp__ <- fit$lp()
+    out
+}
+
+#' @export
+get_lp.CmdStanMLE <- function(fit) {
+    fit$lp()
 }

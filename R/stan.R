@@ -102,7 +102,6 @@ get_statistic.stanfit <- function(fit, fun) {
 #' @export
 get_parameter_dim.stanfit <- function(fit) {
     pd <- fit@par_dims
-    pd <- pd[names(pd) != "lp__"]
     lapply(pd, function(d) d %||% 1L)
 }
 
