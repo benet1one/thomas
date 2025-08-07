@@ -6,5 +6,9 @@
 #     iter = 100,
 #     seed = 123
 # )
+# cmdstan_mle <- optimize_cmdstan(
+#     model = model,
+#     data = list(y = 3)
+# )
 #
 # usethis::use_data(cmdstan_fit, overwrite = TRUE)
