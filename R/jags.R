@@ -150,7 +150,7 @@ get_draws.rjags <- function(fit, as = c("df", "list", "array")) {
 
     switch(as,
        df = draws_to_df(draws, pd),
-       df_list = draws_to_df(draws, pd, column_lists = TRUE),
+       df_listed = draws_to_df(draws, pd, column_lists = TRUE),
        array = draws,
        list = fit$BUGSoutput$sims.list
     )
