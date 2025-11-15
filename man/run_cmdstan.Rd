@@ -28,15 +28,16 @@ on the \code{data} block of the stan model.}
 
 \item{inits}{Initial values for parameters. Accepts either:
 \itemize{
-\item Named list, with the initial values for the parameters. All chains will start
+\item Unnamed list of a named list, with the initial values for the parameters. All chains will start
 with these values. For example: \cr
-\code{inits = list(a = 2, b = 1:5)}.
-\item List of lists, where each element is a named list of values corresponding to a chain.
+\code{inits = list(list(a = 2, b = 1:5))}.
+\item List of named lists, where each element is a named list of values corresponding to a chain.
 For example, with 2 chains: \cr
 \code{inits = list(list(a = 2, b = 1:5), list(a = 3, b = 2:6))}
 \item Data.frame, where each row corresponds to a chain and each column corresponds to a parameter.
+You can use a \code{\link[tibble:tibble]{tibble::tibble()}} for multivariate parameters.
 For example: with 2 chains: \cr
-\code{inits = data.frame(a = 2:3, b = list(1:5, 2:6))}
+\code{inits = tibble::tibble(a = 2:3, b = list(1:5, 2:6))}
 \item Function. Takes an input \code{chain_id} and outputs a named list. For example: \cr
 \code{inits = function(chain_id) { list(a = chain_id, b = rpois(5, 1.2)) }}
 }}

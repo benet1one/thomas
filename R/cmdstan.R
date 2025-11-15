@@ -30,13 +30,19 @@ parse_cmdstan_inits <- function(inits, chains) {
         return(NULL)
     if (rlang::is_function(inits))
         return(inits)
+    if (rlang::is_atomic(inits))
+        stop("`inits` must be a list, data.frame, or function.")
+
     if (is.data.frame(inits))
-        inits <- split.data.frame(inits, factor(1:nrow(inits)))
+        inits <- apply(inits, 1L, as.list, simplify = FALSE)
+    if (is.list(inits) && !is.null(names(inits)))
+        stop("If `inits` is a list, it must be an unnamed list of named lists. ",
+             "If you want to use the same `inits` for each chain, you can use `list(list(...))`")
 
     if (length(inits) == 1L)
         inits <- rep(inits, chains)
     if (length(inits) != chains)
-        stop("inits must be either length 1, or the number of chains (", chains,").")
+        stop("`inits` must be either length 1, or the number of chains (", chains,").")
     inits
 }
 
@@ -48,15 +54,16 @@ parse_cmdstan_inits <- function(inits, chains) {
 #' @param data List containing the data for fitting. Must contain all the variables
 #' on the `data` block of the stan model.
 #' @param inits Initial values for parameters. Accepts either:
-#' - Named list, with the initial values for the parameters. All chains will start
+#' - Unnamed list of a named list, with the initial values for the parameters. All chains will start
 #' with these values. For example: \cr
-#' `inits = list(a = 2, b = 1:5)`.
-#' - List of lists, where each element is a named list of values corresponding to a chain.
+#' `inits = list(list(a = 2, b = 1:5))`.
+#' - List of named lists, where each element is a named list of values corresponding to a chain.
 #' For example, with 2 chains: \cr
 #' `inits = list(list(a = 2, b = 1:5), list(a = 3, b = 2:6))`
 #' - Data.frame, where each row corresponds to a chain and each column corresponds to a parameter.
+#' You can use a [tibble::tibble()] for multivariate parameters.
 #' For example: with 2 chains: \cr
-#' `inits = data.frame(a = 2:3, b = list(1:5, 2:6))`
+#' `inits = tibble::tibble(a = 2:3, b = list(1:5, 2:6))`
 #' - Function. Takes an input `chain_id` and outputs a named list. For example: \cr
 #' `inits = function(chain_id) { list(a = chain_id, b = rpois(5, 1.2)) }`
 #' @param iter Number of iterations, including burnin, per chain.

@@ -23,13 +23,19 @@ parse_stan_inits <- function(inits, chains) {
         return("random")
     if (rlang::is_function(inits))
         return(inits)
+    if (rlang::is_atomic(inits))
+        stop("`inits` must be a list, data.frame, or function.")
+
     if (is.data.frame(inits))
-        inits <- split.data.frame(inits, factor(1:nrow(inits)))
+        inits <- apply(inits, 1L, as.list, simplify = FALSE)
+    if (is.list(inits) && !is.null(names(inits)))
+        stop("If `inits` is a list, it must be an unnamed list of named lists. ",
+             "If you want to use the same `inits` for each chain, you can use `list(list(...))`")
 
     if (length(inits) == 1L)
         inits <- rep(inits, chains)
     if (length(inits) != chains)
-        stop("inits must be either length 1, or the number of chains (", chains,").")
+        stop("`inits` must be either length 1, or the number of chains (", chains,").")
     inits
 }
 
