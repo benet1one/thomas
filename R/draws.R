@@ -69,7 +69,7 @@ get_parameter_dim.thomas_draw_df <- function(fit) {
 
     if (attr(x, "column_lists")) {
         y <- x[...]
-        y <- lapply(y, unlist)
+        y <- lapply(y, \(v) v[[1]])
         return(y)
     }
 
@@ -88,7 +88,7 @@ get_parameter_dim.thomas_draw_df <- function(fit) {
         y <- y[[1L]]
     }
 
-    attr(,"column_lists") <- NULL
+    attr(y, "column_lists") <- NULL
     attr(y, "par_dim") <- NULL
     return(y)
 }
