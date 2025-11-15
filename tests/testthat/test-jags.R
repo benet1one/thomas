@@ -27,7 +27,7 @@ jags_fit <- run_jags(
 )
 
 run_jags(
-    file = "tests/testthat/model.jags",
+    file = "model.jags",
     data = my_data,
     parameters = c("a", "b", "l"),
     iter = 100
@@ -36,7 +36,7 @@ run_jags(
 test_that("file and model", {
     expect_error(run_jags(
         model = my_model,
-        file = "tests/testthat/model.jags",
+        file = "model.jags",
         data = my_data,
         parameters = c("a", "b", "l"),
         iter = 100
@@ -46,9 +46,9 @@ test_that("file and model", {
         parameters = c("a", "b", "l"),
         iter = 100
     ))
-    expect_warning(jags_model(
+    expect_error(jags_model(
         model = {whatever},
-        file = "tests/testthat/model.jags"
+        file = "model.jags"
     ))
 })
 
