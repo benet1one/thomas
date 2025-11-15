@@ -5,17 +5,37 @@
 \alias{get_samples}
 \title{Get posterior samples}
 \usage{
-get_draws(fit, as = c("df", "list", "array"))
+get_draws(fit, as = c("df", "df_listed", "list", "array"))
 
-get_samples(fit, as = c("df", "list", "array"))
+get_samples(fit, as = c("df", "df_listed", "list", "array"))
 }
 \arguments{
 \item{fit}{STAN or JAGS fit.}
 
-\item{as}{String, "df" to return a tibble with iteration and chain,
-"list" to return a list of parameters, and
-"array" to return a 3-D array (iter, chain, parameter).}
+\item{as}{String.
+\itemize{
+\item \code{"df"} to return a tibble with iteration and chain, with multivariate parameters as
+arrays.
+\item \code{"df_listed"} to return a tibble with iteration and chain, with multivariate parameters
+as lists.
+\item \code{"list"} to return a list of parameters, and
+\item \code{"array"} to return a 3-D array (iter, chain, parameter).
+}}
 }
 \description{
 Get the posterior samples from a bayesian fit.
+}
+\examples{
+data("jags_fit")
+
+draw_df <- thomas::get_draws(jags_fit, as = "df")
+draw_df
+draw_df[[1, ]]
+
+draw_df_listed <- thomas::get_draws(jags_fit, as = "df_listed")
+draw_df_listed
+draw_df_listed[[1, ]]
+
+thomas::get_draws(jags_git, as = "list")
+thomas::get_draws(jags_git, as = "array")
 }

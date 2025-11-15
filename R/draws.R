@@ -1,5 +1,5 @@
 
-draws_to_df <- function(samp, par_dim) {
+draws_to_df <- function(samp, par_dim, column_lists = FALSE) {
     names(dimnames(samp)) <- c("iter", "chain", "parameter")
     df <- reshape2::melt(samp)
     par_names <- stringr::str_remove(df$parameter, r"(\[.+\])")
@@ -11,16 +11,23 @@ draws_to_df <- function(samp, par_dim) {
     tib$chain <- as.integer(tib$chain)
 
     for (p in unique(par_names)) {
-        mat <- df[par_names == p, ] |>
+        column <- df[par_names == p, ] |>
             reshape2::acast(chain + iter ~ parameter)
-        if (ncol(mat) == 1L)
-            mat <- c(mat)
-        tib[[p]] <- mat
+
+        if (ncol(column) == 1L) {
+            column <- column[, 1L]
+        } else if (column_lists) {
+            column <- apply(column, 1L, array, dim = par_dim[[p]], simplify = FALSE)
+            column <- unname(column)
+        }
+
+        tib[[p]] <- column
     }
 
     structure(
         tib,
         class = c("thomas_draw_df", class(tib)),
+        column_lists = column_lists,
         par_dim = par_dim
     )
 }
@@ -44,19 +51,29 @@ get_parameter_dim.thomas_draw_df <- function(fit) {
 #' draws[[1, ]]
 #' draws[[1, "gamma"]]
 `[[.thomas_draw_df` <- function(x, ...) {
-    if (...length() != 1L && ...length() != 2L) {
-        rlang::abort("Use draws[[i, ]] to extract exactly one draw.")
-    }
     if (...length() == 1L) {
         return(unclass(x)[[...]])
-    } else if (...length() == 2L) {
-        dots <- rlang::dots_list(..., .ignore_empty = "none", .preserve_empty = TRUE)
-        if (rlang::is_missing(dots[[1L]])) {
-            return(unclass(x)[[dots[[2L]]]])
-        }
-        y <- x[...]
+    }
+    if (...length() != 2L) {
+        rlang::abort("Use draws[[i, ]] to extract exactly one draw.")
     }
 
+    dots <- rlang::dots_list(..., .ignore_empty = "none", .preserve_empty = TRUE)
+
+    if (rlang::is_missing(dots[[1L]])) {
+        return(unclass(x)[[dots[[2L]]]])
+    }
+    if (length(dots[[1L]]) != 1L) {
+        rlang::abort("Use draws[[i, ]] to extract exactly one draw.")
+    }
+
+    if (attr(x, "column_lists")) {
+        y <- x[...]
+        y <- lapply(y, unlist)
+        return(y)
+    }
+
+    y <- x[...]
     y <- as.list(y)
     pd <- get_parameter_dim(x)
 
@@ -67,8 +84,10 @@ get_parameter_dim.thomas_draw_df <- function(fit) {
         }
     }
 
-    if (length(y) == 1L)
+    if (length(y) == 1L) {
         y <- y[[1L]]
+    }
+
     attr(y, "par_dim") <- NULL
     return(y)
 }
@@ -173,4 +192,5 @@ attach_draw <- function(fit, index, chain, iter, envir = parent.frame()) {
 attach_sample <- function(fit, index, chain, iter, envir = parent.frame()) {
     attach_draw(fit, index, chain, iter, envir)
 }
+
 

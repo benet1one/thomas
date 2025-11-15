@@ -4,18 +4,35 @@
 #' Get the posterior samples from a bayesian fit.
 #'
 #' @param fit STAN or JAGS fit.
-#' @param as String, "df" to return a tibble with iteration and chain,
-#' "list" to return a list of parameters, and
-#' "array" to return a 3-D array (iter, chain, parameter).
+#' @param as String.
+#' - `"df"` to return a tibble with iteration and chain, with multivariate parameters as
+#' arrays.
+#' - `"df_listed"` to return a tibble with iteration and chain, with multivariate parameters
+#' as lists.
+#' - `"list"` to return a list of parameters, and
+#' - `"array"` to return a 3-D array (iter, chain, parameter).
 #'
+#' @examples
+#' data("jags_fit")
+#'
+#' draw_df <- thomas::get_draws(jags_fit, as = "df")
+#' draw_df
+#' draw_df[[1, ]]
+#'
+#' draw_df_listed <- thomas::get_draws(jags_fit, as = "df_listed")
+#' draw_df_listed
+#' draw_df_listed[[1, ]]
+#'
+#' thomas::get_draws(jags_git, as = "list")
+#' thomas::get_draws(jags_git, as = "array")
 #' @rdname get_posterior_draws
 #' @export
-get_draws <- function(fit, as = c("df", "list", "array"))
+get_draws <- function(fit, as = c("df", "df_listed", "list", "array"))
     UseMethod("get_draws")
 
 #' @rdname get_posterior_draws
 #' @export
-get_samples <- function(fit, as = c("df", "list", "array"))
+get_samples <- function(fit, as = c("df", "df_listed", "list", "array"))
     UseMethod("get_draws")
 
 get_draws_anyway <- function(fit_or_draws) {
