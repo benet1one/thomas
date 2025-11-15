@@ -13,11 +13,6 @@ stan_model <- function(file, string, ...) {
         rstan::stan_model(model_code = string)
 }
 
-setMethod("show", signature(object = "stanmodel"), function(object) {
-    cat("<Stan Model>\n")
-    cat(attr(object, "model_code"))
-})
-
 parse_stan_inits <- function(inits, chains) {
     if (is.null(inits))
         return("random")
