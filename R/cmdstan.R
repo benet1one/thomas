@@ -109,12 +109,24 @@ run_cmdstan <- function(model, file, data, inits = NULL,
 }
 
 #' @export
+run_cmdstan_advi <- function(model, file, data, inits = NULL, n_draws = 1000,
+                             algorithm = c("meanfield", "fullrank"), ...) {
     rlang::check_installed("cmdstanr")
 
     if (missing(model) + missing(file) != 1L)
         stop("Specify either 'model' (see cmdstan_model()) or 'file'.")
     if (missing(model))
         model <- cmdstan_model(file)
+
+    model$variational(
+        data = data,
+        init = parse_cmdstan_inits(inits, chains = 1L),
+        draws = n_draws,
+        algorithm = algorithm[1L],
+        ...
+    )
+}
+
 #' @export
 run_cmdstan_optimizer <- function(model, file, data, inits = NULL, ...) {
     rlang::check_installed("cmdstanr")
@@ -144,6 +156,9 @@ get_draws.CmdStanMCMC <- function(fit, as = c("df", "list", "array")) {
         array = draws
     )
 }
+
+#' @export
+get_draws.CmdStanVB <- get_draws.CmdStanMCMC
 
 #' @export
 get_parameter_dim.CmdStanFit <- function(fit) {

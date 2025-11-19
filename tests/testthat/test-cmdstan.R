@@ -8,4 +8,10 @@ cmdstan_fit <- run_cmdstan(
     iter = 100
 )
 
+cmdstan_advi_fit <- run_cmdstan_advi(
+    model = model,
+    data = my_data,
+    n_draws = 10000
+)
+
 file.remove("model.exe")
