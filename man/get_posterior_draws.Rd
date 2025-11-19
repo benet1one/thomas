@@ -36,6 +36,6 @@ draw_df_listed <- thomas::get_draws(jags_fit, as = "df_listed")
 draw_df_listed
 draw_df_listed[[1, ]]
 
-thomas::get_draws(jags_git, as = "list")
-thomas::get_draws(jags_git, as = "array")
+thomas::get_draws(jags_fit, as = "list")
+thomas::get_draws(jags_fit, as = "array")
 }

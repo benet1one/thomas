@@ -23,8 +23,8 @@
 #' draw_df_listed
 #' draw_df_listed[[1, ]]
 #'
-#' thomas::get_draws(jags_git, as = "list")
-#' thomas::get_draws(jags_git, as = "array")
+#' thomas::get_draws(jags_fit, as = "list")
+#' thomas::get_draws(jags_fit, as = "array")
 #' @rdname get_posterior_draws
 #' @export
 get_draws <- function(fit, as = c("df", "df_listed", "list", "array"))
