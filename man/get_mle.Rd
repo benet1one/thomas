@@ -6,6 +6,9 @@
 \usage{
 get_mle(fit)
 }
+\arguments{
+\item{fit}{Fit optimized with \code{\link[=run_cmdstan_optimizer]{run_cmdstan_optimizer()}}.}
+}
 \description{
 Get the Maximum Likelihood Estimation of an optimized fit.
 }

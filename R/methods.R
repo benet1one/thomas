@@ -101,6 +101,7 @@ get_lp <- function(fit) {
 }
 
 #' Get the Maximum Likelihood Estimation of an optimized fit.
+#' @param fit Fit optimized with [run_cmdstan_optimizer()].
 #' @export
 get_mle <- function(fit) {
     UseMethod("get_mle")
