@@ -91,7 +91,7 @@ get_parameter_dim <- function(fit)
 #' Get the names of parameters as a character vector.
 #' @export
 get_parameters <- function(fit) {
-    names(get_parameter_dim(fit))
+    UseMethod("get_parameters")
 }
 
 #' Get the Log-Probability of an optimized fit.
@@ -135,3 +135,7 @@ get_sd.default <- function(fit) {
     get_statistic(fit, fun = sd)
 }
 
+#' @export
+get_parameters.default <- function(fit) {
+    names(get_parameter_dim(fit))
+}

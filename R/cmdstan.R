@@ -25,6 +25,12 @@ print.CmdStanModel <- function(x, ...) {
     x$print()
 }
 
+#' @export
+get_parameters.CmdStanModel <- function(x, ...) {
+    names(x$variables()$parameters)
+}
+
+
 parse_cmdstan_inits <- function(inits, chains) {
     if (is.null(inits))
         return(NULL)
