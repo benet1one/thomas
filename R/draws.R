@@ -118,6 +118,11 @@ traceplot <- function(fit, ..., .max_values = 4L) {
 
     draws <- get_draws_anyway(fit)
 
+    if (attr(draws, "column_lists")) {
+        stop('`traceplot` not available for draws in "df_listed" format. ',
+             'Use `get_draws(fit, as = "df")` instead.')
+    }
+
     if (...length() == 0L) {
         draws <- draws[1:min(6L, ncol(draws))]
     } else {
