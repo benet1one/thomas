@@ -7,6 +7,7 @@ parameters {
     real<lower=0> b;
     array[n] real<lower=0> lambda;
     array[3, 4] real whatever;
+    array[2, 2] simplex[3] spx;
 }
 model {
     lambda ~ gamma(a, b);
