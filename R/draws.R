@@ -114,8 +114,6 @@ drop_matrices <- function(df, max_cols = 4L) {
 traceplot <- function(fit, ..., .max_values = 4L) {
 
     rlang::check_installed("ggplot2")
-    require(ggplot2, quietly = TRUE)
-
     draws <- get_draws_anyway(fit)
 
     if (attr(draws, "column_lists")) {
@@ -131,12 +129,13 @@ traceplot <- function(fit, ..., .max_values = 4L) {
 
     draws <- draws |>
         drop_matrices(max_cols = .max_values) |>
-        reshape2::melt(id.vars = c("chain", "iter"))
+        reshape2::melt(id.vars = c("chain", "iter")) |>
+        suppressWarnings()
 
-    ggplot(draws, aes(x = iter, y = value, color = factor(chain))) +
-        facet_wrap(~variable, scales = "free") +
-        geom_line(show.legend = FALSE) +
-        theme_minimal()
+    ggplot2::ggplot(draws, ggplot2::aes(x = iter, y = value, color = factor(chain))) +
+        ggplot2::facet_wrap(~variable, scales = "free") +
+        ggplot2::geom_line(show.legend = FALSE) +
+        ggplot2::theme_minimal()
 }
 
 
