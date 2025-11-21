@@ -52,10 +52,11 @@ get_draws_anyway <- function(fit_or_draws) {
 #' @param within_chain Logical, whether to permute all draws (default) or permute
 #' iterations within each chain.
 permute_draws <- function(draws, within_chain = FALSE) {
+    draws <- draws[sample.int(nrow(draws)), ]
     if (within_chain)
-        draws <- draws |> dplyr::group_by(chain)
-    dplyr::slice_sample(draws, n = nrow(draws)) |>
-        dplyr::ungroup()
+        draws[order(draws$chain), ]
+    else
+        draws
 }
 
 #' Get a statistic for each parameter.
