@@ -106,7 +106,13 @@ get_statistic.stanfit <- function(fit, fun) {
 #' @export
 get_parameter_dim.stanfit <- function(fit) {
     pd <- fit@par_dims
-    lapply(pd, function(d) d %||% 1L)
+    lapply(pd, function(d) {
+        if (length(d) > 0) d  else 1L
+    })
 }
 
-
+#' @export
+get_parameters.stanfit <- function(fit) {
+    p <- fit@model_pars
+    p[p != "lp__"]
+}
