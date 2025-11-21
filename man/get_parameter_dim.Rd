@@ -7,7 +7,7 @@
 get_parameter_dim(fit)
 }
 \arguments{
-\item{x}{A Bayesian Fit or a Draw Data Frame as generated from \code{\link[=get_draws]{get_draws()}}.}
+\item{fit}{A Bayesian Fit or a Draw Data Frame as generated from \code{\link[=get_draws]{get_draws()}}.}
 }
 \description{
 Get dimensions of parameters.

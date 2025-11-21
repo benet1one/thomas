@@ -26,8 +26,8 @@ print.CmdStanModel <- function(x, ...) {
 }
 
 #' @export
-get_parameters.CmdStanModel <- function(x, ...) {
-    names(x$variables()$parameters)
+get_parameters.CmdStanModel <- function(fit) {
+    names(fit$variables()$parameters)
 }
 
 

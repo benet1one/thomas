@@ -6,6 +6,9 @@
 \usage{
 get_parameters(fit)
 }
+\arguments{
+\item{fit}{A Bayesian Fit or a Draw Data Frame as generated from \code{\link[=get_draws]{get_draws()}}.}
+}
 \description{
 Get the names of parameters as a character vector.
 }
