@@ -49,7 +49,7 @@ run_stan <- function(model, file, data, inits = NULL, parameters = NA,
                      iter = 2000, burnin = floor(iter/2), thin = 1,
                      chains = 4, warmup = burnin,
                      seed = sample.int(.Machine$integer.max, 1),
-                     cores = if (rlang::is_installed("parallel"))
+                     parallel_chains = if (rlang::is_installed("parallel"))
                          parallel::detectCores()
                      else getOption("mc.cores", default = 1L),
                      ...) {
@@ -74,7 +74,7 @@ run_stan <- function(model, file, data, inits = NULL, parameters = NA,
         thin = thin,
 
         seed = seed,
-        cores = cores,
+        cores = parallel_chains,
         ...
     )
 }
