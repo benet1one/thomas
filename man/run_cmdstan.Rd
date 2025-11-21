@@ -15,6 +15,8 @@ run_cmdstan(
   chains = 4,
   warmup = burnin,
   seed = NULL,
+  parallel_chains = if (rlang::is_installed("parallel")) parallel::detectCores() else
+    getOption("mc.cores", default = 1L),
   ...
 )
 }
@@ -54,6 +56,8 @@ The default is 4.}
 \item{warmup}{Alias for \code{burnin}.}
 
 \item{seed}{Seed to use for the RNG.}
+
+\item{parallel_chains}{Maximum number of MCMC chains to run in parallel.}
 
 \item{...}{Arguments passed on to \code{\link[cmdstanr:model-method-sample]{cmdstanr::sample()}}.}
 }
