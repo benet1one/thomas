@@ -30,6 +30,10 @@ on the \code{data} block of the stan model.}
 
 \item{inits}{Initial values for parameters. Accepts either:
 \itemize{
+\item \code{NULL}, allowing CmdStan to choose initial values.
+\item The number \code{0}. All parameters will be initialized at \code{0}.
+\item Real number \code{x}. All parameters will be initialized randomly between \verb{[-x, +x]} on
+the \emph{unconstrained} parameter space.
 \item Unnamed list of a named list, with the initial values for the parameters. All chains will start
 with these values. For example: \cr
 \code{inits = list(list(a = 2, b = 1:5))}.

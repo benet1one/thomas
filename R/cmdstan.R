@@ -33,11 +33,13 @@ get_parameters.CmdStanModel <- function(fit) {
 
 parse_cmdstan_inits <- function(inits, chains) {
     if (is.null(inits))
-        return(NULL)
+        return(inits)
     if (rlang::is_function(inits))
         return(inits)
+    if (is.numeric(inits) && length(inits) == 1L)
+        return(abs(inits))
     if (rlang::is_atomic(inits))
-        stop("`inits` must be a list, data.frame, or function.")
+        stop("`inits` must be a number, list, data.frame, or function.")
 
     if (is.data.frame(inits))
         inits <- apply(inits, 1L, as.list, simplify = FALSE)
@@ -61,6 +63,10 @@ parse_cmdstan_inits <- function(inits, chains) {
 #' @param data List containing the data for fitting. Must contain all the variables
 #' on the `data` block of the stan model.
 #' @param inits Initial values for parameters. Accepts either:
+#' - `NULL`, allowing CmdStan to choose initial values.
+#' - The number `0`. All parameters will be initialized at `0`.
+#' - Real number `x`. All parameters will be initialized randomly between `[-x, +x]` on
+#' the *unconstrained* parameter space.
 #' - Unnamed list of a named list, with the initial values for the parameters. All chains will start
 #' with these values. For example: \cr
 #' `inits = list(list(a = 2, b = 1:5))`.
@@ -116,6 +122,24 @@ run_cmdstan <- function(model, file, data, inits = NULL,
     )
 }
 
+
+parse_cmdstan_advi_inits <- function(inits) {
+    if (is.null(inits))
+        return(inits)
+    if (rlang::is_function(inits))
+        return(inits)
+    if (is.numeric(inits) && length(inits) == 1L)
+        return(abs(inits))
+    if (!is.list(inits))
+        stop("`inits` must be a number, list, or function.")
+
+    if (length(inits) == 1L && !rlang::is_named(inits) && is.list(inits[[1]]))
+        inits <- inits[[1]]
+    if (!rlang::is_named(inits))
+        stop("If `inits` is a list, it must be named with the names of the parameters.")
+    list(inits)
+}
+
 #' Automatic Differentiation Variational Inference (ADVI) with CmdStan.
 #'
 #' Alternative to Markov Chain Monte-Carlo for generating posterior draws.
@@ -125,7 +149,13 @@ run_cmdstan <- function(model, file, data, inits = NULL,
 #' @param file Alternatively, a .stan file containing the model code.
 #' @param data List containing the data for fitting. Must contain all the variables
 #' on the `data` block of the stan model.
-#' @param inits
+#' @param inits Initial values for parameters. Accepts either:
+#' - `NULL`, allowing CmdStan to choose initial values.
+#' - The number `0`. All parameters will be initialized at `0`.
+#' - Real number `x`. All parameters will be initialized randomly between `[-x, +x]` on
+#' the *unconstrained* parameter space.
+#' - Named list, with the initial values for the parameters.
+#' `inits = list(a = 2, b = 1:5)`.
 #' @param n_draws Number of draws to sample from the posterior distribution.
 #' Unlike MCMC, the ADVI method can produce a large number of draws
 #' without increasing computation time significantly.
@@ -154,7 +184,7 @@ run_cmdstan_advi <- function(model, file, data, inits = NULL, n_draws = 1000,
     suppressMessages(model$compile())
     model$variational(
         data = data,
-        init = parse_cmdstan_inits(inits, chains = 1L),
+        init = parse_cmdstan_advi_inits(inits),
         draws = n_draws,
         algorithm = algorithm[1L],
         ...

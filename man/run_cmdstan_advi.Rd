@@ -2,7 +2,7 @@
 % Please edit documentation in R/cmdstan.R
 \name{run_cmdstan_advi}
 \alias{run_cmdstan_advi}
-\title{Fit Automatic Differentiation Variational Inference (ADVI) with CmdStan.}
+\title{Automatic Differentiation Variational Inference (ADVI) with CmdStan.}
 \usage{
 run_cmdstan_advi(
   model,
@@ -22,12 +22,36 @@ run_cmdstan_advi(
 \item{data}{List containing the data for fitting. Must contain all the variables
 on the \code{data} block of the stan model.}
 
-\item{algorithm}{Algorithm used for fitting. Can be \code{"meanfield"} or \code{"fullrank"}.}
+\item{inits}{Initial values for parameters. Accepts either:
+\itemize{
+\item \code{NULL}, allowing CmdStan to choose initial values.
+\item The number \code{0}. All parameters will be initialized at \code{0}.
+\item Real number \code{x}. All parameters will be initialized randomly between \verb{[-x, +x]} on
+the \emph{unconstrained} parameter space.
+\item Named list, with the initial values for the parameters.
+\code{inits = list(a = 2, b = 1:5)}.
+}}
 
-\item{...}{}
+\item{n_draws}{Number of draws to sample from the posterior distribution.
+Unlike MCMC, the ADVI method can produce a large number of draws
+without increasing computation time significantly.}
+
+\item{algorithm}{Algorithm used for fitting. Can be \code{"meanfield"} or \code{"fullrank"}.
+\itemize{
+\item \code{meanfield} uses a fully factorized Gaussian for the approximation.
+This is the default algorithm.
+\item \code{fullrank} uses a Gaussian with a full-rank covariance matrix for the approximation.
+}}
+
+\item{...}{Other arguments passed to \code{\link[cmdstanr:model-method-variational]{cmdstanr::variational()}}.}
 }
 \description{
-See \code{\link[cmdstanr:model-method-variational]{cmdstanr::variational()}}.
+Alternative to Markov Chain Monte-Carlo for generating posterior draws.
+Calls \code{\link[cmdstanr:model-method-variational]{cmdstanr::variational()}}.
+}
+\details{
+For more details about ADVI and how the algorithms work, see
+\href{https://jmlr.org/papers/volume18/16-107/16-107.pdf}{Automatic Differentiation Variational Inference}.
 }
 \seealso{
 \code{\link[cmdstanr:model-method-variational]{cmdstanr::variational()}}
