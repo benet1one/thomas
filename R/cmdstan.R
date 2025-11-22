@@ -100,6 +100,8 @@ run_cmdstan <- function(model, file, data, inits = NULL,
         stop("Specify either 'model' (see cmdstan_model()) or 'file'.")
     if (missing(model))
         model <- cmdstan_model(file)
+
+    suppressMessages(model$compile())
     model$sample(
         data = data,
         init = parse_cmdstan_inits(inits, chains),
@@ -149,6 +151,7 @@ run_cmdstan_advi <- function(model, file, data, inits = NULL, n_draws = 1000,
     if (missing(model))
         model <- cmdstan_model(file)
 
+    suppressMessages(model$compile())
     model$variational(
         data = data,
         init = parse_cmdstan_inits(inits, chains = 1L),
@@ -167,6 +170,7 @@ run_cmdstan_optimizer <- function(model, file, data, inits = NULL, ...) {
     if (missing(model))
         model <- cmdstan_model(file)
 
+    suppressMessages(model$compile())
     model$optimize(
         data = data,
         init = parse_cmdstan_inits(inits, chains = 1L),
