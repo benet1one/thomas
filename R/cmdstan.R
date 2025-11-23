@@ -116,6 +116,7 @@ run_cmdstan <- function(model, file, data, inits = NULL,
         iter_sampling = iter - warmup,
         thin = thin,
         chains = chains,
+        parallel_chains = parallel_chains,
 
         seed = seed,
         ...
