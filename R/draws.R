@@ -111,7 +111,7 @@ drop_matrices <- function(df, max_cols = 4L) {
 #' @param .max_values For multivariate parameters, number of different values to plot.
 #'
 #' @export
-traceplot <- function(fit, ..., .max_values = 4L) {
+traceplot <- function(fit, ..., .max_values = 4L, .show_chain = TRUE) {
 
     rlang::check_installed("ggplot2")
     draws <- get_draws_anyway(fit)
@@ -122,20 +122,26 @@ traceplot <- function(fit, ..., .max_values = 4L) {
     }
 
     if (...length() == 0L) {
-        draws <- draws[1:min(6L, ncol(draws))]
+        draws <- draws[1:min(9L, ncol(draws))]
     } else {
         draws <- dplyr::select(draws, iter, chain, ...)
     }
 
-    draws <- draws |>
+    lp <- names(draws) %in% c("lp__", "deviance")
+
+    draws <- draws[order(-lp)] |>
         drop_matrices(max_cols = .max_values) |>
         reshape2::melt(id.vars = c("chain", "iter")) |>
+        dplyr::mutate(chain = factor(chain)) |>
         suppressWarnings()
 
-    ggplot2::ggplot(draws, ggplot2::aes(x = iter, y = value, color = factor(chain))) +
+    tp <- ggplot2::ggplot(draws, ggplot2::aes(x = iter, y = value, color = chain)) +
         ggplot2::facet_wrap(~variable, scales = "free") +
-        ggplot2::geom_line(show.legend = FALSE) +
+        ggplot2::geom_line(show.legend = .show_chain) +
         ggplot2::theme_minimal()
+
+    plot(tp)
+    invisible(tp)
 }
 
 
