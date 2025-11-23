@@ -210,7 +210,7 @@ run_cmdstan_optimizer <- function(model, file, data, inits = NULL, ...) {
 }
 
 #' @export
-get_draws.CmdStanMCMC <- function(fit, as = c("df", "list", "array")) {
+get_draws.CmdStanFit <- function(fit, as = c("df", "list", "array")) {
     as <- as[1L]
     draws <- fit$draws(format = "array")
     pd <- get_parameter_dim(fit)
@@ -222,9 +222,6 @@ get_draws.CmdStanMCMC <- function(fit, as = c("df", "list", "array")) {
         array = draws
     )
 }
-
-#' @export
-get_draws.CmdStanVB <- get_draws.CmdStanMCMC
 
 #' @export
 get_parameter_dim.CmdStanFit <- function(fit) {
