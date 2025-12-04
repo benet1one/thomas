@@ -65,14 +65,19 @@ print.jags_model <- function(x, ...) {
 
 parse_jags_inits <- function(inits, chains) {
     if (is.null(inits))
-        return(NULL)
+        return(inits)
+    if (rlang::is_atomic(inits))
+        stop("`inits` must be a number, list, data.frame, or function.")
     if (is.data.frame(inits))
-        inits <- split.data.frame(inits, factor(1:nrow(inits)))
+        inits <- apply(inits, 1L, as.list, simplify = FALSE)
+    if (is.list(inits) && !is.null(names(inits)))
+        stop("If `inits` is a list, it must be an unnamed list of named lists. ",
+             "If you want to use the same `inits` for each chain, you can use `list(list(...))`")
 
     if (length(inits) == 1L)
         inits <- rep(inits, chains)
     if (length(inits) != chains)
-        stop("inits must be either length 1, or the number of chains (", chains,").")
+        stop("`inits` must be either length 1, or the number of chains (", chains,").")
     inits
 }
 
@@ -97,15 +102,16 @@ get_parameters.jags_model <- function(model) {
 #' @param file Alternatively, a file containing the JAGS code.
 #' @param data List containing the data used to train the model.
 #' @param inits Initial values for parameters. Accepts either:
-#' - Named list, with the initial values for the parameters. All chains will start
-#' with these values. For example:
-#' `inits = list(a = 2, b = 1:5)`.
-#' - List of lists, where each element is a named list of values corresponding to a chain.
-#' For example, with 2 chains:
+#' - Unnamed list of a named list, with the initial values for the parameters. All chains will start
+#' with these values. For example: \cr
+#' `inits = list(list(a = 2, b = 1:5))`.
+#' - List of named lists, where each element is a named list of values corresponding to a chain.
+#' For example, with 2 chains: \cr
 #' `inits = list(list(a = 2, b = 1:5), list(a = 3, b = 2:6))`
 #' - Data.frame, where each row corresponds to a chain and each column corresponds to a parameter.
-#' For example: with 2 chains:
-#' `inits = data.frame(a = 2:3, b = list(1:5, 2:6))`
+#' You can use a [tibble::tibble()] for multivariate parameters.
+#' For example: with 2 chains: \cr
+#' `inits = tibble::tibble(a = 2:3, b = list(1:5, 2:6))`
 #' @param parameters Character vector of parameters to monitor. If left NULL,
 #' attempts to guess all parameters. Careful! If data is missing a variable,
 #' it will be assumed to be a generated quantity and you will not recieve a warning.
