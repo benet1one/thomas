@@ -40,7 +40,9 @@ For example: with 2 chains:
 \code{inits = data.frame(a = 2:3, b = list(1:5, 2:6))}
 }}
 
-\item{parameters}{Character vector of parameters to monitor.}
+\item{parameters}{Character vector of parameters to monitor. If left NULL,
+attempts to guess all parameters. Careful! If data is missing a variable,
+it will be assumed to be a generated quantity and you will not recieve a warning.}
 
 \item{iter}{Number of iterations, including burnin, per chain.}
 

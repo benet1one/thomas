@@ -106,7 +106,9 @@ get_parameters.jags_model <- function(model) {
 #' - Data.frame, where each row corresponds to a chain and each column corresponds to a parameter.
 #' For example: with 2 chains:
 #' `inits = data.frame(a = 2:3, b = list(1:5, 2:6))`
-#' @param parameters Character vector of parameters to monitor.
+#' @param parameters Character vector of parameters to monitor. If left NULL,
+#' attempts to guess all parameters. Careful! If data is missing a variable,
+#' it will be assumed to be a generated quantity and you will not recieve a warning.
 #' @param iter Number of iterations, including burnin, per chain.
 #' @param burnin Number of samples to burn per chain.
 #' @param warmup Alias for `burnin`.
@@ -140,6 +142,8 @@ run_jags <- function(model, file, data, inits = NULL, parameters = NULL,
 
     if (is.null(parameters)) {
         parameters <- get_parameters.jags_model(model) |> setdiff(names(data))
+        parprint <- paste0('"', parameters, '"', collapse = ", ")
+        message("Guessed parameters: c(", parprint, ")")
     }
 
     fit <- R2jags::jags(
