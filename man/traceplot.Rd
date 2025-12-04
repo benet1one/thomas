@@ -12,6 +12,8 @@ traceplot(fit, ..., .max_values = 4L, .show_chain = TRUE)
 \item{...}{Parameters to select, passed to \code{\link[dplyr:select]{dplyr::select()}}.}
 
 \item{.max_values}{For multivariate parameters, number of different values to plot.}
+
+\item{.show_chain}{Whether to show chain numbers in legend.}
 }
 \description{
 Plot chains to check convergence.
