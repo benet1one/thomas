@@ -24,7 +24,6 @@ my_data <- list(y = rpois(50, 32), n = 50)
 jags_fit <- run_jags(
     model = my_model,
     data = my_data,
-    parameters = c("a", "b", "l", "lambda", "whatever"),
     iter = 100
 )
 

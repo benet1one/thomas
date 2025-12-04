@@ -58,7 +58,8 @@ jags_model <- function(model, data, file) {
 print.jags_model <- function(x, ...) {
     cat("<JAGS Model>\n")
     line_split <- strsplit(x, r"(\n)") |> unlist()
-    lined <- paste0(1:length(line_split), ": ", line_split, collapse = "\n")
+    line_number <- format(1:length(line_split))
+    lined <- paste0(line_number, ": ", line_split, collapse = "\n")
     cat(lined)
 }
 
@@ -79,6 +80,13 @@ parse_jags_model <- function(model) {
     if (rlang::is_string(model))
         return(model)
     stop("'model' must be a string or a jags_model().")
+}
+
+#' @export
+get_parameters.jags_model <- function(model) {
+    model |>
+        stringr::str_match_all(r"((?<par>\w+)(\[.+\])? *~)") |>
+        _[[1]][, "par"]
 }
 
 #' Fit a JAGS model
@@ -107,25 +115,31 @@ parse_jags_model <- function(model) {
 #' The default is 4.
 #' @param seed Seed to use for the RNG. In JAGS, specifying a seed
 #' simply runs \code{set.seed(seed)}.
+#' @param refresh Positive Integer, number of iterations between updates of the progress bars.
 #' @param ... Arguments passed on to [R2jags::jags()].
+#'
 #' @seealso [R2jags::jags()]
 #' @return An rjags fit.
 #' @export
-run_jags <- function(model, file, data, inits = NULL, parameters,
+run_jags <- function(model, file, data, inits = NULL, parameters = NULL,
                      iter = 2000, burnin = floor(iter/2), thin = 1,
-                     chains = 4, warmup = burnin, seed, ...) {
+                     chains = 4, warmup = burnin, refresh = iter/100, seed, ...) {
 
     rlang::check_installed("R2jags")
 
     if (!missing(seed))
         set.seed(seed)
-    if (missing(model) + missing(file) != 1L)
+    if (missing(model) + missing(file) != 1L) {
         stop("Specify either model (see jags_model()) or file.")
-    if (missing(parameters))
-        stop('argument "parameters" is missing, with no default')
-    if (!missing(model)) {
+    } else if (missing(model)) {
+        model <- readLines(file, warn = FALSE) |> paste(collapse = "\n")
+    } else {
         model <- parse_jags_model(model)
         file <- textConnection(model)
+    }
+
+    if (is.null(parameters)) {
+        parameters <- get_parameters.jags_model(model) |> setdiff(names(data))
     }
 
     fit <- R2jags::jags(
@@ -138,6 +152,7 @@ run_jags <- function(model, file, data, inits = NULL, parameters,
         n.burnin = warmup,
         n.thin = thin,
         n.chains = chains,
+        refresh = refresh,
         ...
     )
 }

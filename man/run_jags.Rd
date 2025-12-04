@@ -9,12 +9,13 @@ run_jags(
   file,
   data,
   inits = NULL,
-  parameters,
+  parameters = NULL,
   iter = 2000,
   burnin = floor(iter/2),
   thin = 1,
   chains = 4,
   warmup = burnin,
+  refresh = iter/100,
   seed,
   ...
 )
@@ -51,6 +52,8 @@ For example: with 2 chains:
 The default is 4.}
 
 \item{warmup}{Alias for \code{burnin}.}
+
+\item{refresh}{Positive Integer, number of iterations between updates of the progress bars.}
 
 \item{seed}{Seed to use for the RNG. In JAGS, specifying a seed
 simply runs \code{set.seed(seed)}.}
