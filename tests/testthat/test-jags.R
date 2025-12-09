@@ -2,8 +2,8 @@
 # setwd("tests/testthat")
 
 my_model <- jags_model({
-    a ~ dexp(0.01)
-    b ~ dexp(0.01)
+    a ~ dexp(0.01) |> T(2, )
+    b ~ dexp(0.01) %>% T(, 5)
 
     for (i in 1:n) {
         lambda[i] ~ dgamma(a, b)

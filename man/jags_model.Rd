@@ -19,10 +19,11 @@ this function and get syntax highlighting and warnings.
 Alternatively, specify the file where the model is written.
 }
 \details{
-In order to truncate a distribution, you can use
-the magrittr pipe \code{\%>\%}
-and NOT the R pipe \code{|>} between the distribution and the truncation,
-such as \code{dnorm(0, 1) \%>\% T(0, )}
+In order to truncate a distribution, you can use the pipe.
+\itemize{
+\item Use the magrittr pipe (recommended):  \code{a ~ dnorm(0, 1) \%>\% T(2, )}
+\item Alternatively, the native pipe:  \code{a ~ dnorm(0, 1) |> T(2, )}.
+}
 }
 \examples{
 my_model <- jags_model({

@@ -1,11 +1,20 @@
 
+parse_truncation <- function(text) {
+    text |>
+        stringr::str_replace_all(r"( *\%>\% *)", " ") |>
+        stringr::str_replace_all(
+            r"(T\((?<dist>[\w\.]+\(.+\)), (?<trunc>.+)\))",
+            r"(\1 T(\2))"
+        )
+}
+
 format_jags_block <- function(expr, block_name) {
     if (!rlang::is_symbolic(expr)  &&  !rlang::is_string(expr))
         stop("'", block_name, "' must be an expression or a string.")
     text <- format(expr) |>
-        paste(collapse = "\n") |>
-        gsub(pattern = r"( ?\%>\% ?)", replacement = " ")
-    if (!grepl(r"(^\{)", text))
+        parse_truncation() |>
+        paste(collapse = "\n")
+    if (!stringr::str_detect(text, r"(^\{)"))
         text <- paste0("{\n    ", text, "\n}")
     paste(block_name, text)
 }
@@ -21,10 +30,9 @@ format_jags_block <- function(expr, block_name) {
 #' @param file String indicating where the model is written.
 #'
 #' @details
-#' In order to truncate a distribution, you can use
-#' the magrittr pipe \code{\%>\%}
-#' and NOT the R pipe \code{|>} between the distribution and the truncation,
-#' such as \code{dnorm(0, 1) \%>\% T(0, )}
+#' In order to truncate a distribution, you can use the pipe.
+#' - Use the magrittr pipe (recommended):  `a ~ dnorm(0, 1) %>% T(2, )`
+#' - Alternatively, the native pipe:  `a ~ dnorm(0, 1) |> T(2, )`.
 #'
 #' @export
 #' @examples
