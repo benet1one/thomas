@@ -17,7 +17,7 @@ draws_to_df <- function(samp, par_dim, column_lists = FALSE) {
         if (ncol(column) == 1L) {
             column <- column[, 1L]
         } else if (column_lists) {
-            column <- apply(column, 1L, array, dim = par_dim[[p]], simplify = FALSE)
+            column <- apply(column, 1L, simplest_array, dim = par_dim[[p]], simplify = FALSE)
             column <- unname(column)
         }
 
@@ -30,6 +30,14 @@ draws_to_df <- function(samp, par_dim, column_lists = FALSE) {
         column_lists = column_lists,
         par_dim = par_dim
     )
+}
+
+simplest_array <- function(x, dim = NULL) {
+    if (is.null(dim) || length(dim) == 1L) {
+        c(x)
+    } else {
+        array(x, dim = dim)
+    }
 }
 
 #' @export
@@ -80,7 +88,7 @@ get_parameter_dim.thomas_draw_df <- function(fit) {
     for (k in seq_along(y)) {
         p <- names(y)[k]
         if (p %in% names(pd)) {
-            y[[k]] <- array(y[[k]], dim = pd[[p]])
+            y[[k]] <- simplest_array(y[[k]], dim = pd[[p]])
         }
     }
 
