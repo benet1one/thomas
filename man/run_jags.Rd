@@ -9,7 +9,7 @@ run_jags(
   file,
   data,
   inits = NULL,
-  parameters = NULL,
+  drop_parameters = character(),
   iter = 2000,
   burnin = floor(iter/2),
   thin = 1,
@@ -41,9 +41,8 @@ For example: with 2 chains: \cr
 \code{inits = tibble::tibble(a = 2:3, b = list(1:5, 2:6))}
 }}
 
-\item{parameters}{Character vector of parameters to monitor. If left NULL,
-attempts to guess all parameters. Careful! If data is missing a variable,
-it will be assumed to be a generated quantity and you will not recieve a warning.}
+\item{drop_parameters}{Character vector of parameters to exclude from final output. Saves
+runtime memory.}
 
 \item{iter}{Number of iterations, including burnin, per chain.}
 

@@ -120,9 +120,8 @@ get_parameters.jags_model <- function(model) {
 #' You can use a [tibble::tibble()] for multivariate parameters.
 #' For example: with 2 chains: \cr
 #' `inits = tibble::tibble(a = 2:3, b = list(1:5, 2:6))`
-#' @param parameters Character vector of parameters to monitor. If left NULL,
-#' attempts to guess all parameters. Careful! If data is missing a variable,
-#' it will be assumed to be a generated quantity and you will not recieve a warning.
+#' @param drop_parameters Character vector of parameters to exclude from final output. Saves
+#' runtime memory.
 #' @param iter Number of iterations, including burnin, per chain.
 #' @param burnin Number of samples to burn per chain.
 #' @param warmup Alias for `burnin`.
@@ -137,7 +136,7 @@ get_parameters.jags_model <- function(model) {
 #' @seealso [R2jags::jags()]
 #' @return An rjags fit.
 #' @export
-run_jags <- function(model, file, data, inits = NULL, parameters = NULL,
+run_jags <- function(model, file, data, inits = NULL, drop_parameters = character(),
                      iter = 2000, burnin = floor(iter/2), thin = 1,
                      chains = 4, warmup = burnin, refresh = iter/100, seed, ...) {
 
@@ -154,11 +153,17 @@ run_jags <- function(model, file, data, inits = NULL, parameters = NULL,
         file <- textConnection(model)
     }
 
-    if (is.null(parameters)) {
-        parameters <- get_parameters.jags_model(model) |> setdiff(names(data))
-        parprint <- paste0('"', parameters, '"', collapse = ", ")
-        message("Guessed parameters: c(", parprint, ")")
+    parameters <- get_parameters.jags_model(model) |> setdiff(names(data))
+    missing_parameters <- setdiff(drop_parameters, parameters)
+
+    if (length(missing_parameters) > 0) {
+        miss_par <- paste('"', missing_parameters, '"', collapse = ", ")
+        warning("Parameters ", miss_par, " not present in model")
     }
+
+    parameters <- parameters |> setdiff(drop_parameters)
+    parprint <- paste0('"', parameters, '"', collapse = ", ")
+    cat("\nParameter vector: c(", parprint, ")\n", sep = "")
 
     fit <- R2jags::jags(
         model.file = file,

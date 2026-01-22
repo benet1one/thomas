@@ -31,21 +31,25 @@ jags_fit <- run_jags(
 run_jags(
     file = "model.jags",
     data = my_data,
-    parameters = c("a", "b", "l"),
+    drop_parameters = c("a", "b"),
     iter = 100
 )
 
 test_that("file and model", {
+    expect_warning(run_jags(
+        model = my_model,
+        data = my_data,
+        drop_parameters = c("a", "unexistant_parameter"),
+        iter = 100
+    ))
     expect_error(run_jags(
         model = my_model,
         file = "model.jags",
         data = my_data,
-        parameters = c("a", "b", "l"),
         iter = 100
     ))
     expect_error(run_jags(
         data = my_data,
-        parameters = c("a", "b", "l"),
         iter = 100
     ))
     expect_error(jags_model(
